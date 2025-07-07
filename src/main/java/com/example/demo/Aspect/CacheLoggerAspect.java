@@ -1,7 +1,6 @@
 package com.example.demo.Aspect;
 
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -13,9 +12,10 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class CacheLoggerAspect {
     @Pointcut("@annotation(org.springframework.cache.annotation.Cacheable)")
-    public void cacheableMethods() {}
+    public void cacheableMethods() {
+    }
 
-    @AfterReturning("cacheableMethods()")
+    @Around("cacheableMethods()")
     public void logCacheHit(Cacheable cacheable, Object result) {
         log.debug("【缓存命中】{} | key={}", cacheable.value());
     }

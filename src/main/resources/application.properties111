@@ -6,7 +6,7 @@ spring.datasource.password=qwer
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 spring.data.redis.host=localhost
-spring.data.redis.port=6377
+spring.data.redis.port=6379
 spring.data.redis.password=
 
 spring.cache.type=redis

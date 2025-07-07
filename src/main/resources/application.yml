@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: demo  # 应用名称
+
+  datasource:
+    #    url: jdbc:mysql://localhost:3306/test  # 数据库连接 URL
+    #    username: root  # 数据库用户名
+    #    password: qwer  # 数据库密码
+    #    driver-class-name: com.mysql.cj.jdbc.Driver  # JDBC 驱动类名
+
+    dynamic:
+      enabled: true #启用动态数据源，默认true
+      primary: user #设置默认的数据源或者数据源组,默认值即为master
+      strict: false #严格匹配数据源,默认false. true未匹配到指定数据源时抛异常,false使用默认数据源
+      grace-destroy: false #是否优雅关闭数据源，默认为false，设置为true时，关闭数据源时如果数据源中还存在活跃连接，至多等待10s后强制关闭
+
+      datasource:
+        user:
+          url: jdbc:mysql://localhost:3306/test  # 数据库连接 URL
+          username: root  # 数据库用户名
+          password: qwer  # 数据库密码
+          driver-class-name: com.mysql.cj.jdbc.Driver  # JDBC 驱动类名
+
+        data1:
+          url: jdbc:mysql://localhost:3306/shield
+          username: root  # 数据库用户名
+          password: qwer  # 数据库密码
+          #          url: jdbc:mysql://172.22.102.61:33061/slave_db1
+          #          username: root
+          #          password: BKNt7ago^pBTL#Lr
+          driver-class-name: com.mysql.cj.jdbc.Driver
+
+  data:
+    redis:
+      host: localhost  # Redis 服务器地址
+      port: 6379  # Redis 端口
+      password: ""  # Redis 密码（空）
+
+  cache:
+    type: redis  # 缓存类型设为 Redis
+    redis:
+      key-prefix: "CACHE:"  # 缓存键前缀

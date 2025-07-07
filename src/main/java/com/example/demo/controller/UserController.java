@@ -10,7 +10,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.example.demo.utils.response.createResponse;
@@ -20,7 +19,6 @@ import static com.example.demo.utils.response.createResponse;
 @Slf4j
 // 激活审计功能，自动记录创建和更新时间
 @EnableJpaAuditing
-
 public class UserController {
 
     @Autowired
@@ -32,7 +30,7 @@ public class UserController {
     @PostMapping("/test")
     public ResponseEntity<Map<String, Object>> test() {
         redisTemplate.opsForValue().set("key", "value");
-        System.out.println("基本接口测试");
+        log.info("基本接口测试");
         return createResponse("success", "test", "test");
     }
 
