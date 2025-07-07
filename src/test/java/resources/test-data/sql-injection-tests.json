@@ -1,0 +1,194 @@
+[
+  {
+    "name": "常规查询",
+    "request": {
+      "tableName": "tb_repair",
+      "columns": [
+        "id",
+        "id_container",
+        "code_path"
+      ],
+      "columnsCondition": [
+        "code_path",
+        "id_container"
+      ],
+      "values": [
+        "id_9_device_5_container_5_source.txt",
+        "5"
+      ]
+    },
+    "expectedSql": "SELECT id,id_container,code_path FROM tb_repair WHERE code_path = ? AND id_container = ?",
+    "expectedParams": [
+      "id_9_device_5_container_5_source.txt",
+      "5"
+    ]
+  },
+  {
+    "name": "单引号注入攻击",
+    "request": {
+      "tableName": "tb_repair",
+      "columns": [
+        "id",
+        "id_container",
+        "code_path"
+      ],
+      "columnsCondition": [
+        "code_path",
+        "id_container"
+      ],
+      "values": [
+        "' OR '1'='1",
+        "5"
+      ]
+    },
+    "expectedSql": "SELECT id,id_container,code_path FROM tb_repair WHERE code_path = ? AND id_container = ?",
+    "expectedParams": [
+      "' OR '1'='1",
+      "5"
+    ]
+  },
+  {
+    "name": "联合查询注入",
+    "request": {
+      "tableName": "tb_repair",
+      "columns": [
+        "id",
+        "id_container",
+        "code_path"
+      ],
+      "columnsCondition": [
+        "code_path",
+        "id_container"
+      ],
+      "values": [
+        "' UNION SELECT version(), user(), database() -- ",
+        "5"
+      ]
+    },
+    "expectedSql": "SELECT id,id_container,code_path FROM tb_repair WHERE code_path = ? AND id_container = ?",
+    "expectedParams": [
+      "' UNION SELECT version(), user(), database() -- ",
+      "5"
+    ]
+  },
+  {
+    "name": "堆叠查询攻击",
+    "request": {
+      "tableName": "tb_repair",
+      "columns": [
+        "id",
+        "id_container",
+        "code_path"
+      ],
+      "columnsCondition": [
+        "code_path",
+        "id_container"
+      ],
+      "values": [
+        "'; DROP TABLE users; --",
+        "5"
+      ]
+    },
+    "expectedSql": "SELECT id,id_container,code_path FROM tb_repair WHERE code_path = ? AND id_container = ?",
+    "expectedParams": [
+      "'; DROP TABLE users; --",
+      "5"
+    ]
+  },
+  {
+    "name": "十六进制编码绕过",
+    "request": {
+      "tableName": "tb_repair",
+      "columns": [
+        "id",
+        "id_container",
+        "code_path"
+      ],
+      "columnsCondition": [
+        "code_path",
+        "id_container"
+      ],
+      "values": [
+        "0x27 OR 1=1 --",
+        "5"
+      ]
+    },
+    "expectedSql": "SELECT id,id_container,code_path FROM tb_repair WHERE code_path = ? AND id_container = ?",
+    "expectedParams": [
+      "0x27 OR 1=1 --",
+      "5"
+    ]
+  },
+  {
+    "name": "Unicode编码绕过",
+    "request": {
+      "tableName": "tb_repair",
+      "columns": [
+        "id",
+        "id_container",
+        "code_path"
+      ],
+      "columnsCondition": [
+        "code_path",
+        "id_container"
+      ],
+      "values": [
+        "\\u0027 OR 1=1 --",
+        "5"
+      ]
+    },
+    "expectedSql": "SELECT id,id_container,code_path FROM tb_repair WHERE code_path = ? AND id_container = ?",
+    "expectedParams": [
+      "\\u0027 OR 1=1 --",
+      "5"
+    ]
+  },
+  {
+    "name": "特殊字符攻击",
+    "request": {
+      "tableName": "tb_repair",
+      "columns": [
+        "id",
+        "id_container",
+        "code_path"
+      ],
+      "columnsCondition": [
+        "code_path",
+        "id_container"
+      ],
+      "values": [
+        "/*!SELECT*/ * FROM users",
+        "5"
+      ]
+    },
+    "expectedSql": "SELECT id,id_container,code_path FROM tb_repair WHERE code_path = ? AND id_container = ?",
+    "expectedParams": [
+      "/*!SELECT*/ * FROM users",
+      "5"
+    ]
+  },
+  {
+    "name": "空值处理测试",
+    "request": {
+      "tableName": "tb_repair",
+      "columns": [
+        "id",
+        "id_container",
+        "code_path"
+      ],
+      "columnsCondition": [
+        "code_path",
+        "id_container"
+      ],
+      "values": [
+        "",
+        ""
+      ]
+    },
+    "expectedSql": "SELECT id,id_container,code_path FROM tb_repair WHERE code_path = ? AND id_container = ?",
+    "expectedParams": [
+      "",
+      ""
+    ]
+  }
+]

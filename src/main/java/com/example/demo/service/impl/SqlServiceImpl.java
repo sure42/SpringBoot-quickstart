@@ -2,6 +2,8 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.QueryRequest;
 import com.example.demo.service.SqlService;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,19 +16,25 @@ import java.util.Map;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class SqlServiceImpl implements SqlService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    //
+    @Override
     public List<Map<String, Object>> query(QueryRequest request) {
 
         List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
         String sql = buildDynamicSql(request);
-        return jdbcTemplate.queryForList(sql);
+        log.debug("SQL查询语句 | sql={}", sql);
+        log.debug("SQL参数数量 | count={}", request.getValues().size());
+        return jdbcTemplate.queryForList(
+                sql,
+                request.getValues().toArray()
+        );
     }
 
-    private String buildDynamicSql(QueryRequest request) {
+    String buildDynamicSql(QueryRequest request) {
         // 动态拼接SQL[9,10](@ref)
         StringBuilder sql = new StringBuilder("SELECT ");
         if (!request.getColumns().isEmpty() | !request.getTableName().isEmpty()) {
@@ -34,18 +42,18 @@ public class SqlServiceImpl implements SqlService {
                     .append(" FROM ").append(request.getTableName());
         }
 
-        // 这里需要加一个预编译的操作，避免注入
-        if (!request.getValues().isEmpty()) {
+        // 采用占位符的方式，避免SQL注入
+        if (!request.getValues().isEmpty() && !request.getColumnsCondition().isEmpty()) {
             sql.append(" WHERE ");
             List<String> clauses = new ArrayList<>();
-            Iterator<String> valuesIter = request.getValues().iterator();
+
             Iterator<String> columnsConditionIter = request.getColumnsCondition().iterator();
-            while (valuesIter.hasNext() && columnsConditionIter.hasNext()) {
-                String value = valuesIter.next();
+
+            while (columnsConditionIter.hasNext()) {
                 String column = columnsConditionIter.next();
-                clauses.add(column + "='" + value + "'");
+                clauses.add(column + " = ?");
             }
-            log.info("SQL字符串拼接检查 | clauses={}", clauses);
+
             sql.append(String.join(" AND ", clauses));
         }
         return sql.toString();

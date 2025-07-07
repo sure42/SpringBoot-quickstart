@@ -1,7 +1,5 @@
 package com.example.demo.controller;
 
-
-import com.baomidou.dynamic.datasource.annotation.DS;
 import com.example.demo.entity.QueryRequest;
 import com.example.demo.service.SqlService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +23,6 @@ public class SqlController {
     @Autowired
     private SqlService sqlService;
 
-    @DS("data1")
     @PostMapping("/query")
     public ResponseEntity<Map<String, Object>> query(@RequestBody QueryRequest request) {
 
@@ -33,11 +30,14 @@ public class SqlController {
         if (!isValidParam(request.getTableName()) |
                 !isValidParam(request.getColumns().toString()) |
                 !isValidParam(request.getValues().toString())) {
+            log.info("非法表名或参数 | request={}", request);
             throw new SecurityException("非法表名或参数");
         }
         if (!(request.getColumnsCondition().size() == request.getValues().size())) {
+            log.info("非法表名或参数 | request={}", request);
             throw new SecurityException("非法参数");
         }
+        log.info("查询成功 ！");
         return createResponse("success", "query", sqlService.query(request));
     }
 }
